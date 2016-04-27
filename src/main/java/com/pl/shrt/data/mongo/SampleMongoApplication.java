@@ -61,7 +61,7 @@ public class SampleMongoApplication implements CommandLineRunner {
 
 	}
 
-	public static void main(String[] args) throws Exception {
-		SpringApplication.run(SampleMongoApplication.class, args);
-	}
+//	public static void main(String[] args) throws Exception {
+//		SpringApplication.run(SampleMongoApplication.class, args);
+//	}
 }
