@@ -13,10 +13,10 @@ import org.springframework.data.annotation.Id;
 public class ShrtURL {
 
     @Id
-    private String urlId;
+    private String id;
 
     /** provided encoded URL */
-    private String url;
+    private String encodedURL;
     
     /**
      * 
@@ -26,11 +26,43 @@ public class ShrtURL {
 
     /**
      * @param urlId
-     * @param url
+     * @param encodedURL
      */
     public ShrtURL(String urlId, String encodedURL) {
-        this.urlId = urlId;
-        this.url = encodedURL;
+        this.id = urlId;
+        this.encodedURL = encodedURL;
+    }
+
+
+    /**
+     * @return the urlId
+     */
+    public String getUrlId() {
+        return id;
+    }
+
+
+    /**
+     * @param urlId the urlId to set
+     */
+    public void setUrlId(String urlId) {
+        this.id = urlId;
+    }
+
+
+    /**
+     * @return the encodedURL
+     */
+    public String getURL() {
+        return encodedURL;
+    }
+
+
+    /**
+     * @param encodedURL the encodedURL to set
+     */
+    public void setURL(String url) {
+        this.encodedURL = url;
     }
 
 
@@ -41,14 +73,14 @@ public class ShrtURL {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("ShrtURL [");
-        if (urlId != null) {
+        if (id != null) {
             builder.append("urlId=");
-            builder.append(urlId);
+            builder.append(id);
             builder.append(", ");
         }
-        if (url != null) {
-            builder.append("url=");
-            builder.append(url);
+        if (encodedURL != null) {
+            builder.append("encodedURL=");
+            builder.append(encodedURL);
         }
         builder.append("]");
         return builder.toString();

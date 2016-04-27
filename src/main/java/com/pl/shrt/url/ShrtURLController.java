@@ -1,7 +1,6 @@
 package com.pl.shrt.url;
 
 import java.io.IOException;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -13,6 +12,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.pl.shrt.url.service.RequestCapture;
 
 @RestController
 public class ShrtURLController {
@@ -28,39 +29,65 @@ public class ShrtURLController {
     @Autowired 
     private HttpServletRequest request;
     
-    public ShrtURLController() {
-        shrtURLRepository.deleteAll();
-    }
-
+    @Autowired
+    private RequestCapture requestCapture;
+    
+    /**
+     * do the actual re-direct here.
+     * @param urlId
+     */
     @RequestMapping(value = "/{urlId}", method = RequestMethod.GET) 
     public void getURL(@PathVariable String urlId) {
+    
+        // async call that will not slow us down in the re-direct.
+        requestCapture.saveRequestAttributes(request);
+        
+        int status = HttpServletResponse.SC_OK;
         
         try {
-            response.sendRedirect("");
+        
+            // TODO think about the URL and when/where should it be validated.
+            String shrtURL = shrtURLRepository.findById(urlId);
+            
+            response.sendRedirect(shrtURL);
+
         } catch (IOException e) {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            status = HttpServletResponse.SC_NOT_FOUND;
+            log.error("was not able to redirect : {}", e.getMessage());
         }
+        
+        response.setStatus(status);
     }
     
+    /**
+     * create or return the shrt code
+     * @param encodedURL
+     * @return shrt form of the given url
+     */
     @RequestMapping(value = "/c/{encodedURL}", method = RequestMethod.GET)
     public String createShrtURL(@PathVariable String encodedURL) {
-        ShrtURL shrtURL = null;
+        ShrtURL shrtURL = new ShrtURL();
 
-        // in case someone has already given us this URL
-        List<ShrtURL> urls = shrtURLRepository.findByURL(encodedURL);
+        shrtURL.setURL(encodedURL);
         
-        for (ShrtURL url : urls) {
-            shrtURL = url;
-        }
+        // TODO Defensive code a check for the existing URL existing (Do we enforce unique URLs in the datastore?)
+        // TODO Shorten the Id value... MongoDB ID generator maybe... 
         
-        if (shrtURL == null) {
-            // create new url shortented and save it.
-        }
-        return null;
+        shrtURLRepository.save(shrtURL);
+        
+        return shrtURL.getUrlId();
     }
     
+    /**
+        // TODO need to hide this behind some security
+
+     * If need be update the given shrt code with the new URL.
+     * @param urlId
+     * @param url
+     */
     @RequestMapping(value= "/u/{urlId}/{url}", method = RequestMethod.POST) 
     public void updateURL(@PathVariable String urlId, @PathVariable String url) {
+        
         
         if (shrtURLRepository.exists(urlId)) {
             ShrtURL shrtURL = new ShrtURL(urlId, url);
