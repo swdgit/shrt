@@ -8,6 +8,6 @@ public interface ShrtURLRepository extends MongoRepository<ShrtURL, String> {
 
     public List<ShrtURL> findByURL(String encodedURL);
     
-    public String findById(String id);
+    public ShrtURL findById(String id);
 
 }

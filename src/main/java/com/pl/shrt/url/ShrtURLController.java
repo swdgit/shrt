@@ -1,6 +1,7 @@
 package com.pl.shrt.url;
 
 import java.io.IOException;
+import java.net.URLDecoder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -47,9 +48,10 @@ public class ShrtURLController {
         try {
         
             // TODO think about the URL and when/where should it be validated.
-            String shrtURL = shrtURLRepository.findById(urlId);
+            ShrtURL shrtURL = shrtURLRepository.findById(urlId);
             
-            response.sendRedirect(shrtURL);
+            log.debug("Sending to : {} ", URLDecoder.decode(shrtURL.getURL(), "UTF-8"));
+            response.sendRedirect(URLDecoder.decode(shrtURL.getURL(), "UTF-8"));
 
         } catch (IOException e) {
             status = HttpServletResponse.SC_NOT_FOUND;

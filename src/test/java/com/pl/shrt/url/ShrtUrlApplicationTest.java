@@ -26,6 +26,8 @@ public class ShrtUrlApplicationTest {
     
     private RestTemplate template = new TestRestTemplate();
     
+    private String generatedId = null;
+    
     @Test
     public void addShortURL() {
         
@@ -40,8 +42,15 @@ public class ShrtUrlApplicationTest {
             
             assertNotNull(urlId.getBody());
             
+            generatedId = urlId.getBody();
+            
         } catch (UnsupportedEncodingException e) {
             log.error("failed to encode : {} ", e.getMessage() );
         }
+    }
+    
+    @Test
+    public void redirectToId() {
+        template.getForEntity("http://localhost:8080/" + generatedId, String.class);
     }
 }
