@@ -1,5 +1,6 @@
 package com.pl.shrt.url;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.UnsupportedEncodingException;
@@ -44,13 +45,19 @@ public class ShrtUrlApplicationTest {
             
             generatedId = urlId.getBody();
             
+            ResponseEntity<String> foundURL = template.getForEntity("http://localhost:8080/v/" + generatedId, String.class);
+            log.debug("What we got back {} ", foundURL);
+            
+            assertEquals(encodedURL, foundURL.getBody());
+            
         } catch (UnsupportedEncodingException e) {
             log.error("failed to encode : {} ", e.getMessage() );
         }
     }
-    
-    @Test
-    public void redirectToId() {
-        template.getForEntity("http://localhost:8080/" + generatedId, String.class);
-    }
+
+
+//    @Test
+//    public void redirectToId() {
+//        template.getForEntity("http://localhost:8080/" + generatedId, String.class);
+//    }
 }

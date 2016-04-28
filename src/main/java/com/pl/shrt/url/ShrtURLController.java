@@ -38,7 +38,7 @@ public class ShrtURLController {
      * @param urlId
      */
     @RequestMapping(value = "/{urlId}", method = RequestMethod.GET) 
-    public void getURL(@PathVariable String urlId) {
+    public void redirectToURL(@PathVariable String urlId) {
     
         // async call that will not slow us down in the re-direct.
         requestCapture.saveRequestAttributes(request);
@@ -51,6 +51,7 @@ public class ShrtURLController {
             ShrtURL shrtURL = shrtURLRepository.findById(urlId);
             
             log.debug("Sending to : {} ", URLDecoder.decode(shrtURL.getURL(), "UTF-8"));
+            
             response.sendRedirect(URLDecoder.decode(shrtURL.getURL(), "UTF-8"));
 
         } catch (IOException e) {
@@ -95,6 +96,18 @@ public class ShrtURLController {
             ShrtURL shrtURL = new ShrtURL(urlId, url);
             shrtURLRepository.save(shrtURL);
         }
+    }
+    
+    /**
+     * get the URL from the id. can be used to validate your submission.
+     * @param urlId
+     * @return
+     */
+    @RequestMapping(value = "/v/{urlId}", method = RequestMethod.GET) 
+    public String getURL(@PathVariable String urlId) {
+
+        ShrtURL shrtURL = shrtURLRepository.findById(urlId);
+        return shrtURL.getURL();
     }
     
 }
