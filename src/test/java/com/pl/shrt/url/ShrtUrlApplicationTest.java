@@ -35,8 +35,12 @@ public class ShrtUrlApplicationTest {
         String url = "http://localhost/alive";
 
         try {
+            // we now need to add a user for security reasons first.
+
+            String userId = template.postForObject("http://localhost:8080/sec/add?username=createurl&password=password&company=mine", null, String.class);
+
             String encodedURL = URLEncoder.encode(url, "UTF-8");
-            String getForEntity = "http://localhost:8080/c?url=" + encodedURL;
+            String getForEntity = "http://localhost:8080/c/"+userId+"?url=" + encodedURL;
             
             log.info("calling : {} ", getForEntity);
             ResponseEntity<String> urlId = template.getForEntity(getForEntity, String.class);

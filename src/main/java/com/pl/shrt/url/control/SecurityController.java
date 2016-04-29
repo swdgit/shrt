@@ -4,17 +4,17 @@ import java.sql.Timestamp;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.pl.shrt.url.model.Security;
 import com.pl.shrt.url.repos.SecurityRepository;
 
-@Controller
-@RequestMapping("/sec/*")
+@RestController
+@RequestMapping("/sec")
 public class SecurityController {
     
     @Autowired
@@ -28,17 +28,18 @@ public class SecurityController {
      * @param company
      * @return
      */
-    @RequestMapping(value = "add", method = RequestMethod.POST)
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
     public String addUser(@RequestParam("username") String username,
                           @RequestParam("password") String password,
-                          @RequestParam("company") String company) {
+                          @RequestParam("company")  String company) {
         
         Security existing = securityRepo.findByUsername(username);
         
         String userId = "user " + username + " already exists";
         
-        if (existing != null) {
+        if (existing == null) {
             Security newUser = new Security(username, password, company);
+            newUser.setActive(true);
             securityRepo.save(newUser);
 
             userId = newUser.getId();
@@ -54,7 +55,7 @@ public class SecurityController {
      * @param status
      * @return
      */
-    @RequestMapping(value = "setStatus", method = RequestMethod.POST)
+    @RequestMapping(value = "/setStatus/{userId}/{status}", method = RequestMethod.POST)
     public String setUserStatus(@PathVariable String userId, @PathVariable boolean status) {
 
         String response = "User not found";
@@ -63,7 +64,7 @@ public class SecurityController {
             Security security = securityRepo.findById(userId);
             security.setActive(!security.isActive());
             securityRepo.save(security);
-            response += security.isActive();
+            response = "User status updated: " + status;
         }
         
         return response;
@@ -76,7 +77,7 @@ public class SecurityController {
      * @param newPassword
      * @return
      */
-    @RequestMapping(value = "changePassword", method = RequestMethod.POST)
+    @RequestMapping(value = "/changePassword", method = RequestMethod.POST)
     public String setNewPassword(@PathVariable String userId,
                           @RequestParam("password") String password,
                           @RequestParam("newPassword") String newPassword) {
@@ -104,7 +105,7 @@ public class SecurityController {
      * @param company
      * @return
      */
-    @RequestMapping(value = "setCompany", method = RequestMethod.POST)
+    @RequestMapping(value = "/setCompany", method = RequestMethod.POST)
     public String setCompanyName(@PathVariable String userId, @RequestParam("company") String company) {
 
         String status = "User not found";
