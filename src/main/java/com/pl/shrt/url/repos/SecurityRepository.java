@@ -6,6 +6,8 @@ import com.pl.shrt.url.model.Security;
 
 
 public interface SecurityRepository extends MongoRepository<Security, String> {
+    
+    public Security findByUsername(String username);
 
     public Security findById(String id);
 
