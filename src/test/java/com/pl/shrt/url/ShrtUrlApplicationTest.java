@@ -36,8 +36,10 @@ public class ShrtUrlApplicationTest {
 
         try {
             String encodedURL = URLEncoder.encode(url, "UTF-8");
+            String getForEntity = "http://localhost:8080/c?url=" + encodedURL;
             
-            ResponseEntity<String> urlId = template.getForEntity("http://localhost:8080/c/" + encodedURL, String.class);
+            log.info("calling : {} ", getForEntity);
+            ResponseEntity<String> urlId = template.getForEntity(getForEntity, String.class);
             
             log.info("Response urlId : {} ", urlId.getBody());
             

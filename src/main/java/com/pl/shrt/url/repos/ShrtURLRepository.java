@@ -1,8 +1,10 @@
-package com.pl.shrt.url;
+package com.pl.shrt.url.repos;
 
 import java.util.List;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
+
+import com.pl.shrt.url.model.ShrtURL;
 
 public interface ShrtURLRepository extends MongoRepository<ShrtURL, String> {
 
