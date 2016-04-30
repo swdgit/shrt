@@ -2,6 +2,7 @@ package com.pl.shrt.url.control;
 
 import java.io.IOException;
 import java.net.URLDecoder;
+import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -86,7 +87,8 @@ public class ShrtURLController {
             ShrtURL shrtURL = new ShrtURL();
     
             shrtURL.setURL(encodedURL);
-            
+            shrtURL.setActive(true);
+            shrtURL.setCreated(new Date(System.currentTimeMillis()));
             // TODO Defensive code a check for the existing URL existing (Do we enforce unique URLs in the datastore?)
             // TODO Shorten the Id value... MongoDB ID generator maybe... 
             
@@ -112,9 +114,13 @@ public class ShrtURLController {
         
         if (shrtURLRepo.exists(urlId)) {
             ShrtURL shrtURL = new ShrtURL(urlId, encodedURL);
+            shrtURL.setUpdated(new Date(System.currentTimeMillis()));
+            
             shrtURLRepo.save(shrtURL);
         }
     }
+    
+    //TODO add the url activate/deactivate  method.
     
     /**
      * get the URL from the id. can be used to validate your submission.

@@ -3,7 +3,7 @@
  */
 package com.pl.shrt.url.model;
 
-import java.sql.Timestamp;
+import java.util.Date;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
@@ -26,9 +26,9 @@ public class ShrtURL {
     
     private boolean active;
 
-    private Timestamp created;
+    private Date created;
     
-    private Timestamp updated;
+    private Date updated;
     
     /**
      * 
@@ -91,28 +91,28 @@ public class ShrtURL {
     /**
      * @return the created
      */
-    public Timestamp getCreated() {
+    public Date getCreated() {
         return created;
     }
 
     /**
      * @param created the created to set
      */
-    public void setCreated(Timestamp created) {
+    public void setCreated(Date created) {
         this.created = created;
     }
 
     /**
      * @return the updated
      */
-    public Timestamp getUpdated() {
+    public Date getUpdated() {
         return updated;
     }
 
     /**
      * @param updated the updated to set
      */
-    public void setUpdated(Timestamp updated) {
+    public void setUpdated(Date updated) {
         this.updated = updated;
     }
 

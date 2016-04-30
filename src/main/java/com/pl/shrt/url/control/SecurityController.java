@@ -1,6 +1,6 @@
 package com.pl.shrt.url.control;
 
-import java.sql.Timestamp;
+import java.util.Date;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -93,7 +93,7 @@ public class SecurityController {
             Security security = securityRepo.findById(userId);
             if (StringUtils.equals(password, security.getPassword())) {
                 security.setPassword(newPassword);
-                security.setUpdated(new Timestamp(System.currentTimeMillis()));
+                security.setUpdated(new Date(System.currentTimeMillis()));
                 securityRepo.save(security);
                 
                 status = "Password updated for " + userId;
@@ -118,7 +118,7 @@ public class SecurityController {
         if (securityRepo.exists(userId)) {
             Security security = securityRepo.findById(userId);
             security.setCompany(company);
-            security.setUpdated(new Timestamp(System.currentTimeMillis()));
+            security.setUpdated(new Date(System.currentTimeMillis()));
             status = "Company name updated";
         }
         return status;

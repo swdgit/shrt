@@ -3,7 +3,7 @@
  */
 package com.pl.shrt.url.model;
 
-import java.sql.Timestamp;
+import java.util.Date;
 
 import org.springframework.data.annotation.Id;
 
@@ -27,9 +27,9 @@ public class Security {
     
     private boolean active;
 
-    private Timestamp created;
+    private Date created;
     
-    private Timestamp updated;
+    private Date updated;
     
     /**
      * @param username account access username
@@ -115,29 +115,29 @@ public class Security {
     /**
      * @return the created
      */
-    public Timestamp getCreated() {
+    public Date getCreated() {
         return created;
     }
 
     /**
      * @param created the created to set
      */
-    public void setCreated(Timestamp created) {
+    public void setCreated(Date created) {
         this.created = created;
     }
 
     /**
      * @return the updated
      */
-    public Timestamp getUpdated() {
+    public Date getUpdated() {
         return updated;
     }
 
     /**
-     * @param updated the updated to set
+     * @param date the updated to set
      */
-    public void setUpdated(Timestamp updated) {
-        this.updated = updated;
+    public void setUpdated(Date date) {
+        this.updated = date;
     }
 
 }
