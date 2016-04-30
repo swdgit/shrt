@@ -3,6 +3,8 @@ package com.pl.shrt.url.control;
 import java.sql.Timestamp;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +19,8 @@ import com.pl.shrt.url.repos.SecurityRepository;
 @RequestMapping("/sec")
 public class SecurityController {
     
+    private final Logger log = LoggerFactory.getLogger(SecurityController.class);
+
     @Autowired
     SecurityRepository securityRepo;
 
@@ -60,6 +64,8 @@ public class SecurityController {
 
         String response = "User not found";
         
+        log.debug("Looking up userId : {} ", userId);
+        
         if (securityRepo.exists(userId)) {
             Security security = securityRepo.findById(userId);
             security.setActive(!security.isActive());
@@ -77,10 +83,10 @@ public class SecurityController {
      * @param newPassword
      * @return
      */
-    @RequestMapping(value = "/changePassword", method = RequestMethod.POST)
+    @RequestMapping(value = "/changePassword/{userId}", method = RequestMethod.POST)
     public String setNewPassword(@PathVariable String userId,
-                          @RequestParam("password") String password,
-                          @RequestParam("newPassword") String newPassword) {
+                                 @RequestParam("password") String password,
+                                 @RequestParam("newPassword") String newPassword) {
         String status = "User not found";
         
         if (securityRepo.exists(userId)) {
@@ -90,7 +96,7 @@ public class SecurityController {
                 security.setUpdated(new Timestamp(System.currentTimeMillis()));
                 securityRepo.save(security);
                 
-                status = "Password updated for ";
+                status = "Password updated for " + userId;
             } else {
                 status = "Current Password does not match";
             }
@@ -105,7 +111,7 @@ public class SecurityController {
      * @param company
      * @return
      */
-    @RequestMapping(value = "/setCompany", method = RequestMethod.POST)
+    @RequestMapping(value = "/setCompany/{userId}", method = RequestMethod.POST)
     public String setCompanyName(@PathVariable String userId, @RequestParam("company") String company) {
 
         String status = "User not found";

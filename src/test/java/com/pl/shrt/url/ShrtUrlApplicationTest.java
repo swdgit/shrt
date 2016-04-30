@@ -60,10 +60,4 @@ public class ShrtUrlApplicationTest {
             log.error("failed to encode : {} ", e.getMessage() );
         }
     }
-
-
-//    @Test
-//    public void redirectToId() {
-//        template.getForEntity("http://localhost:8080/" + generatedId, String.class);
-//    }
 }
