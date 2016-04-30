@@ -15,7 +15,7 @@ public interface RequestCapture {
 
     /**
      * save off the request attributes that we get for a given redirect.
-     * @param request
+     * @param request the provided http request object
      */
     @Async
     public void saveRequestAttributes(HttpServletRequest request);

@@ -32,9 +32,9 @@ public class Security {
     private Timestamp updated;
     
     /**
-     * @param username
-     * @param password
-     * @param company
+     * @param username account access username
+     * @param password account access password
+     * @param company  account company name
      */
     public Security(String username, String password, String company) {
         this.username = username;

@@ -37,8 +37,8 @@ public class ShrtURL {
 
 
     /**
-     * @param urlId
-     * @param encodedURL
+     * @param urlId unique id to lookup
+     * @param encodedURL re-direct to url
      */
     public ShrtURL(String urlId, String encodedURL) {
         this.id = urlId;
@@ -82,7 +82,7 @@ public class ShrtURL {
     }
 
     /**
-     * @param encodedURL the encodedURL to set
+     * @param url the encodedURL to set
      */
     public void setURL(String url) {
         this.encodedURL = url;

@@ -42,7 +42,7 @@ public class ShrtURLController {
     
     /**
      * do the actual re-direct here.
-     * @param urlId
+     * @param urlId unique id provided that will be used to lookup the redirect.
      */
     @RequestMapping(value = "/{urlId}", method = RequestMethod.GET) 
     public void redirectToURL(@PathVariable String urlId) {
@@ -73,9 +73,9 @@ public class ShrtURLController {
     
     /**
      * create or return the shrt code
-     * @param uId
-     * @param encodedURL
-     * @return
+     * @param uId security user id
+     * @param encodedURL the url that is to be re-directed to
+     * @return a unique short code 
      */
     @RequestMapping(value = "/c/{uId}", method = RequestMethod.GET)
     public String createShrtURL(@PathVariable String uId, @RequestParam("url") String encodedURL) {
@@ -103,9 +103,9 @@ public class ShrtURLController {
         // TODO need to hide this behind some security
 
      * If need be update the given shrt code with the new URL.
-     * @param uId
-     * @param urlId
-     * @param encodedURL
+     * @param uId security user id
+     * @param urlId unique short code
+     * @param encodedURL new redirect url for this urlId
      */
     @RequestMapping(value= "/u/{uId}/{urlId}", method = RequestMethod.POST) 
     public void updateURL(@PathVariable String uId, @PathVariable String urlId, @RequestParam("url") String encodedURL) {
@@ -118,8 +118,8 @@ public class ShrtURLController {
     
     /**
      * get the URL from the id. can be used to validate your submission.
-     * @param urlId
-     * @return
+     * @param urlId unique short code
+     * @return 'not found' or the url to be re-directed to for this urlId
      */
     @RequestMapping(value = "/v/{urlId}", method = RequestMethod.GET) 
     public String getURL(@PathVariable String urlId) {

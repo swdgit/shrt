@@ -50,7 +50,7 @@ public class ShrtURLApplication implements AsyncConfigurer {
 
     /**
      * Just what starts everything for Spring Boot
-     * @param args
+     * @param args passed in arguments.
      */
     public static void main(String[] args) {
         

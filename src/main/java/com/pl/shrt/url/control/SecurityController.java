@@ -27,10 +27,10 @@ public class SecurityController {
     /**
      * if the username exist you will not be able to add a new one. 
      * 
-     * @param username
-     * @param password
-     * @param company
-     * @return
+     * @param username account access username
+     * @param password account access password
+     * @param company  account company name
+     * @return generated account access user id.
      */
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public String addUser(@RequestParam("username") String username,
@@ -55,9 +55,9 @@ public class SecurityController {
     
     /** 
      * Alter the users status based on the provided.
-     * @param userId
-     * @param status
-     * @return
+     * @param userId account access user id
+     * @param status turn on/off access to the 
+     * @return text relating to the update of user status. 
      */
     @RequestMapping(value = "/setStatus/{userId}/{status}", method = RequestMethod.POST)
     public String setUserStatus(@PathVariable String userId, @PathVariable boolean status) {
@@ -76,12 +76,12 @@ public class SecurityController {
         return response;
     }
     
-    /**
+    /** 
      * change an existing users password.
-     * @param userId
-     * @param password
-     * @param newPassword
-     * @return
+     * @param userId       account access user id.
+     * @param password     existing account access password
+     * @param newPassword  new account access password
+     * @return text indicating the update status
      */
     @RequestMapping(value = "/changePassword/{userId}", method = RequestMethod.POST)
     public String setNewPassword(@PathVariable String userId,
@@ -107,9 +107,9 @@ public class SecurityController {
     
     /**
      * update a users company name.
-     * @param userId
-     * @param company
-     * @return
+     * @param userId  account access user id.
+     * @param company updated company name
+     * @return text indicating the update status.
      */
     @RequestMapping(value = "/setCompany/{userId}", method = RequestMethod.POST)
     public String setCompanyName(@PathVariable String userId, @RequestParam("company") String company) {

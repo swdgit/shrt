@@ -12,8 +12,8 @@
  
     <groupId>com.pl</groupId>
     <artifactId>shrt</artifactId>
-    <name>Spring Boot Data MongoDB Sample</name>
-    <description>Spring Boot Data MongoDB URL Shortner</description>
+    <name>Shrt - A URL Shortener from Proto-Lounge LLC </name>
+    <description>URL Shortner based on Spring Boot Data and MongoDB </description>
     <version>1.0-SNAPSHOT</version>
 
     <properties>
