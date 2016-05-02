@@ -44,6 +44,7 @@ public class SecurityController {
         if (existing == null) {
             Security newUser = new Security(username, password, company);
             newUser.setActive(true);
+            newUser.setCreated(new Date(System.currentTimeMillis()));
             securityRepo.save(newUser);
 
             userId = newUser.getId();
@@ -69,6 +70,7 @@ public class SecurityController {
         if (securityRepo.exists(userId)) {
             Security security = securityRepo.findById(userId);
             security.setActive(!security.isActive());
+            security.setUpdated(new Date(System.currentTimeMillis()));
             securityRepo.save(security);
             response = "User status updated: " + status;
         }

@@ -3,9 +3,9 @@
  */
 package com.pl.shrt.url.service;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.scheduling.annotation.Async;
+
+import com.pl.shrt.url.model.Request;
 
 /**
  * @author stacydecker
@@ -18,5 +18,5 @@ public interface RequestCapture {
      * @param request the provided http request object
      */
     @Async
-    public void saveRequestAttributes(HttpServletRequest request);
+    public void saveRequestAttributes(Request request);
 }

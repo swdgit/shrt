@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.pl.shrt.url.model.Request;
 import com.pl.shrt.url.model.ShrtURL;
 import com.pl.shrt.url.repos.SecurityRepository;
 import com.pl.shrt.url.repos.ShrtURLRepository;
@@ -26,18 +27,23 @@ public class ShrtURLController {
 
     private final Logger log = LoggerFactory.getLogger(ShrtURLController.class);
     
+    /** connection to the db for short URLs  */
     @Autowired
     private ShrtURLRepository shrtURLRepo;
     
+    /** connection to the db for security checks */
     @Autowired
     private SecurityRepository securityRepo;
     
+    /** the Response object that we can redirect with...  */
     @Autowired
     private HttpServletResponse response;
     
+    /** the requesting service whom we can track */
     @Autowired 
     private HttpServletRequest request;
     
+    /** async link to store off request objects. */
     @Autowired
     private RequestCapture requestCapture;
     
@@ -48,9 +54,6 @@ public class ShrtURLController {
     @RequestMapping(value = "/{urlId}", method = RequestMethod.GET) 
     public void redirectToURL(@PathVariable String urlId) {
     
-        // async call that will not slow us down in the re-direct.
-        requestCapture.saveRequestAttributes(request);
-        
         int status = HttpServletResponse.SC_OK;
         log.debug("Looking for : {} ", urlId);
         try {
@@ -59,7 +62,10 @@ public class ShrtURLController {
             if (shrtURLRepo.exists(urlId)) {
                 ShrtURL shrtURL = shrtURLRepo.findById(urlId);
                 log.debug("Sending to : {} ", URLDecoder.decode(shrtURL.getURL(), "UTF-8"));
-                
+
+                // async call that will not slow us down in the re-direct.
+                Request r = new Request(request);
+                requestCapture.saveRequestAttributes(r);
                 response.sendRedirect(URLDecoder.decode(shrtURL.getURL(), "UTF-8"));
             } else {
                 status = HttpServletResponse.SC_NOT_FOUND;
@@ -84,14 +90,14 @@ public class ShrtURLController {
         String newURLId = "Invalid Request"; 
         if (securityRepo.exists(uId)) {
         
+            // TODO Shorten the Id value... Mongo Object ID generator maybe... 
             ShrtURL shrtURL = new ShrtURL();
     
             shrtURL.setURL(encodedURL);
+            shrtURL.setSecurityId(uId);
             shrtURL.setActive(true);
             shrtURL.setCreated(new Date(System.currentTimeMillis()));
-            // TODO Defensive code a check for the existing URL existing (Do we enforce unique URLs in the datastore?)
-            // TODO Shorten the Id value... MongoDB ID generator maybe... 
-            
+
             shrtURLRepo.save(shrtURL);
             
             log.debug("created : {} ", shrtURL);
@@ -102,8 +108,6 @@ public class ShrtURLController {
     }
     
     /**
-        // TODO need to hide this behind some security
-
      * If need be update the given shrt code with the new URL.
      * @param uId security user id
      * @param urlId unique short code
@@ -114,6 +118,7 @@ public class ShrtURLController {
         
         if (shrtURLRepo.exists(urlId)) {
             ShrtURL shrtURL = new ShrtURL(urlId, encodedURL);
+            shrtURL.setSecurityId(uId);
             shrtURL.setUpdated(new Date(System.currentTimeMillis()));
             
             shrtURLRepo.save(shrtURL);

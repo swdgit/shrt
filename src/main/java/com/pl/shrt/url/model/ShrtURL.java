@@ -6,7 +6,6 @@ package com.pl.shrt.url.model;
 import java.util.Date;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 
 
 /**
@@ -18,8 +17,8 @@ public class ShrtURL {
     @Id
     private String id;
 
-    @DBRef
-    private Security security;
+    /** who created this shrt */
+    private String securityId;
     
     /** provided encoded URL */
     private String encodedURL;
@@ -116,6 +115,20 @@ public class ShrtURL {
         this.updated = updated;
     }
 
+    /**
+     * @param securityId who created this shrt
+     */
+    public void setSecurityId(String securityId) {
+        this.securityId = securityId;
+    }
+
+    /**
+     * @return the associated security id
+     */
+    public String getSecurityId() {
+        return this.securityId;
+    }
+    
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
@@ -143,4 +156,6 @@ public class ShrtURL {
         }
         return valid;
     }
+
+
 }
