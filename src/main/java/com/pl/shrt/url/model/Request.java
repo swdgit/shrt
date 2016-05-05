@@ -29,9 +29,11 @@ public class Request {
     
     private String remoteHost;
     
-    private String remoteAddr;    
+    private String remoteAddr;
     
-    public Request(HttpServletRequest request) {
+    private String shrtURLId;
+    
+    public Request(HttpServletRequest request, ShrtURL shrtURL) {
         
         this.cookies     = request.getCookies();
         this.headerNames = request.getHeaderNames();
@@ -41,6 +43,7 @@ public class Request {
         this.remoteUser  = request.getRemoteUser();
         this.remoteHost  = request.getRemoteHost();
         this.remoteAddr  = request.getRemoteAddr();
+        this.shrtURLId   = shrtURL.getUrlId();
     }
 
     /**
@@ -154,6 +157,18 @@ public class Request {
     public void setRemoteAddr(String remoteAddr) {
         this.remoteAddr = remoteAddr;
     }
-    
-    
+
+    /**
+     * @return the shrtURLId
+     */
+    public String getShrtURLId() {
+        return shrtURLId;
+    }
+
+    /**
+     * @param shrtURLId the shrtURLId to set
+     */
+    public void setShrtURLId(String shrtURLId) {
+        this.shrtURLId = shrtURLId;
+    }
 }

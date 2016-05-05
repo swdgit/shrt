@@ -64,7 +64,7 @@ public class ShrtURLController {
                 log.debug("Sending to : {} ", URLDecoder.decode(shrtURL.getURL(), "UTF-8"));
 
                 // async call that will not slow us down in the re-direct.
-                Request r = new Request(request);
+                Request r = new Request(request, shrtURL);
                 requestCapture.saveRequestAttributes(r);
                 response.sendRedirect(URLDecoder.decode(shrtURL.getURL(), "UTF-8"));
             } else {
