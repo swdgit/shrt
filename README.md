@@ -22,4 +22,4 @@ Built in test uses the embedded mongodb from flapdoodle.
 Local simulated prod testing db. ./mongod --dbpath ~/tmp/mongodb/data/db
 
 debug mode via spring boot
-mvn spring-boot:run -Drun.jvmArguments="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8787"   
+mvn spring-boot:run -Drun.jvmArguments="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8787"
