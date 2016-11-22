@@ -11,5 +11,7 @@ public interface ShrtURLRepository extends MongoRepository<ShrtURL, String> {
     public List<ShrtURL> findByURL(String encodedURL);
     
     public ShrtURL findById(String id);
+    
+    public ShrtURL findByShortId(String id);
 
 }

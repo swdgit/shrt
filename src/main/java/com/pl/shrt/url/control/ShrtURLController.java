@@ -3,13 +3,16 @@ package com.pl.shrt.url.control;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.Date;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -47,6 +50,9 @@ public class ShrtURLController {
     @Autowired
     private RequestCapture requestCapture;
     
+    @Value("${shrt.url.default.length}")
+    private int defaultShrtURLLength;
+    
     /**
      * do the actual re-direct here.
      * @param urlId unique id provided that will be used to lookup the redirect.
@@ -55,12 +61,14 @@ public class ShrtURLController {
     public void redirectToURL(@PathVariable String urlId) {
     
         int status = HttpServletResponse.SC_OK;
+        
         log.debug("Looking for : {} ", urlId);
+
         try {
         
-            // TODO think about the URL and when/where should it be validated.
-            if (shrtURLRepo.exists(urlId)) {
-                ShrtURL shrtURL = shrtURLRepo.findById(urlId);
+            ShrtURL shrtURL = shrtURLRepo.findByShortId(urlId);
+            
+            if (shrtURL != null) {
                 log.debug("Sending to : {} ", URLDecoder.decode(shrtURL.getURL(), "UTF-8"));
 
                 // async call that will not slow us down in the re-direct.
@@ -70,6 +78,7 @@ public class ShrtURLController {
             } else {
                 status = HttpServletResponse.SC_NOT_FOUND;
             }
+            
         } catch (IOException e) {
             status = HttpServletResponse.SC_NOT_FOUND;
             log.error("was not able to redirect : {}", e.getMessage());
@@ -84,15 +93,24 @@ public class ShrtURLController {
      * @param encodedURL the url that is to be re-directed to
      * @return a unique short code 
      */
-    @RequestMapping(value = "/c/{uId}", method = RequestMethod.GET)
-    public String createShrtURL(@PathVariable String uId, @RequestParam("url") String encodedURL) {
+    @RequestMapping(value = {"/c/{uId}","/c/{uId}/{urlLength}"}, method = RequestMethod.GET)
+    public String createShrtURL(@PathVariable String uId, 
+                                @PathVariable Optional<Integer> urlLength,
+                                @RequestParam("url") String encodedURL) {
 
         String newURLId = "Invalid Request"; 
-        if (securityRepo.exists(uId)) {
         
-            // TODO Shorten the Id value... Mongo Object ID generator maybe... 
+        if (securityRepo.exists(uId)) {
+            
+            int shrtLength = defaultShrtURLLength;
+
+            if (urlLength.isPresent()) {
+               shrtLength = urlLength.get();
+            }
+
             ShrtURL shrtURL = new ShrtURL();
-    
+            
+            shrtURL.setShortId(getNewShrtURLId(shrtLength));
             shrtURL.setURL(encodedURL);
             shrtURL.setSecurityId(uId);
             shrtURL.setActive(true);
@@ -102,7 +120,7 @@ public class ShrtURLController {
             
             log.debug("created : {} ", shrtURL);
             
-            newURLId = shrtURL.getUrlId();
+            newURLId = shrtURL.getShortId();
         }
         return newURLId;
     }
@@ -115,10 +133,13 @@ public class ShrtURLController {
      */
     @RequestMapping(value= "/u/{uId}/{urlId}", method = RequestMethod.POST) 
     public void updateURL(@PathVariable String uId, @PathVariable String urlId, @RequestParam("url") String encodedURL) {
+
+        ShrtURL shrtURL = shrtURLRepo.findByShortId(urlId);
         
-        if (shrtURLRepo.exists(urlId)) {
-            ShrtURL shrtURL = new ShrtURL(urlId, encodedURL);
-            shrtURL.setSecurityId(uId);
+        if (shrtURL != null) {
+
+            shrtURL = new ShrtURL(urlId, encodedURL);
+            shrtURL.setURL(encodedURL);
             shrtURL.setUpdated(new Date(System.currentTimeMillis()));
             
             shrtURLRepo.save(shrtURL);
@@ -135,14 +156,34 @@ public class ShrtURLController {
     @RequestMapping(value = "/v/{urlId}", method = RequestMethod.GET) 
     public String getURL(@PathVariable String urlId) {
 
+        ShrtURL shrtURL = shrtURLRepo.findByShortId(urlId);
+
         String url = "not found";
 
-        if (shrtURLRepo.exists(urlId)) {
-            ShrtURL shrtURL = shrtURLRepo.findById(urlId);
+        if (shrtURL != null) {
             url = shrtURL.getURL();
         }
 
         return url;
+    }    
+
+    /**
+     * @param shrtURLLength
+     * @return a unique short url id
+     */
+    private String getNewShrtURLId(int shrtURLLength) {
+        
+        String shrtURLId = null;
+        
+        String temp = null;
+        
+        while (shrtURLId == null) {
+            temp = RandomStringUtils.randomAlphanumeric(shrtURLLength); 
+            if (shrtURLRepo.findByShortId(shrtURLId) == null) {
+                shrtURLId = temp;
+            }
+        }
+        
+        return shrtURLId;
     }
-    
 }

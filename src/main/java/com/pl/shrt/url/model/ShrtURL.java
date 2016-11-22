@@ -6,6 +6,7 @@ package com.pl.shrt.url.model;
 import java.util.Date;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 
 
 /**
@@ -16,6 +17,10 @@ public class ShrtURL {
 
     @Id
     private String id;
+    
+    /** the short unique id for this url */
+    @Indexed(unique = true)
+    private String shortId;
 
     /** who created this shrt */
     private String securityId;
@@ -44,6 +49,19 @@ public class ShrtURL {
         this.encodedURL = encodedURL;
     }
 
+    /**
+     * @return the shortId
+     */
+    public String getShortId() {
+        return shortId;
+    }
+
+    /**
+     * @param shortId the shortId to set
+     */
+    public void setShortId(String shortId) {
+        this.shortId = shortId;
+    }
 
     /**
      * @return the urlId
@@ -81,7 +99,7 @@ public class ShrtURL {
     }
 
     /**
-     * @param url the encodedURL to set
+     * @param aliveURL the encodedURL to set
      */
     public void setURL(String url) {
         this.encodedURL = url;
@@ -129,6 +147,8 @@ public class ShrtURL {
         return this.securityId;
     }
     
+    
+    
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
@@ -137,17 +157,41 @@ public class ShrtURL {
         StringBuilder builder = new StringBuilder();
         builder.append("ShrtURL [");
         if (id != null) {
-            builder.append("urlId=");
+            builder.append("id=");
             builder.append(id);
+            builder.append(", ");
+        }
+        if (shortId != null) {
+            builder.append("shortId=");
+            builder.append(shortId);
+            builder.append(", ");
+        }
+        if (securityId != null) {
+            builder.append("securityId=");
+            builder.append(securityId);
             builder.append(", ");
         }
         if (encodedURL != null) {
             builder.append("encodedURL=");
             builder.append(encodedURL);
+            builder.append(", ");
+        }
+        builder.append("active=");
+        builder.append(active);
+        builder.append(", ");
+        if (created != null) {
+            builder.append("created=");
+            builder.append(created);
+            builder.append(", ");
+        }
+        if (updated != null) {
+            builder.append("updated=");
+            builder.append(updated);
         }
         builder.append("]");
         return builder.toString();
     }
+
 
     public boolean isValid() {
         boolean valid = false;
