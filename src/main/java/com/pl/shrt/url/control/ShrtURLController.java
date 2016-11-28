@@ -1,12 +1,7 @@
 package com.pl.shrt.url.control;
 
-import java.io.IOException;
-import java.net.URLDecoder;
 import java.util.Date;
 import java.util.Optional;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
@@ -19,13 +14,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.pl.shrt.url.model.Request;
 import com.pl.shrt.url.model.ShrtURL;
 import com.pl.shrt.url.repos.SecurityRepository;
 import com.pl.shrt.url.repos.ShrtURLRepository;
-import com.pl.shrt.url.service.RequestCapture;
 
 @RestController
+@RequestMapping("admin")
 public class ShrtURLController {
 
     private final Logger log = LoggerFactory.getLogger(ShrtURLController.class);
@@ -38,54 +32,8 @@ public class ShrtURLController {
     @Autowired
     private SecurityRepository securityRepo;
     
-    /** the Response object that we can redirect with...  */
-    @Autowired
-    private HttpServletResponse response;
-    
-    /** the requesting service whom we can track */
-    @Autowired 
-    private HttpServletRequest request;
-    
-    /** async link to store off request objects. */
-    @Autowired
-    private RequestCapture requestCapture;
-    
     @Value("${shrt.url.default.length}")
     private int defaultShrtURLLength;
-    
-    /**
-     * do the actual re-direct here.
-     * @param urlId unique id provided that will be used to lookup the redirect.
-     */
-    @RequestMapping(value = "/{urlId}", method = RequestMethod.GET) 
-    public void redirectToURL(@PathVariable String urlId) {
-    
-        int status = HttpServletResponse.SC_OK;
-        
-        log.debug("Looking for : {} ", urlId);
-
-        try {
-        
-            ShrtURL shrtURL = shrtURLRepo.findByShortId(urlId);
-            
-            if (shrtURL != null) {
-                log.debug("Sending to : {} ", URLDecoder.decode(shrtURL.getURL(), "UTF-8"));
-
-                // async call that will not slow us down in the re-direct.
-                Request r = new Request(request, shrtURL);
-                requestCapture.saveRequestAttributes(r);
-                response.sendRedirect(URLDecoder.decode(shrtURL.getURL(), "UTF-8"));
-            } else {
-                status = HttpServletResponse.SC_NOT_FOUND;
-            }
-            
-        } catch (IOException e) {
-            status = HttpServletResponse.SC_NOT_FOUND;
-            log.error("was not able to redirect : {}", e.getMessage());
-        }
-        
-        response.setStatus(status);
-    }
     
     /**
      * create or return the shrt code
@@ -93,7 +41,7 @@ public class ShrtURLController {
      * @param encodedURL the url that is to be re-directed to
      * @return a unique short code 
      */
-    @RequestMapping(value = {"/c/{uId}","/c/{uId}/{urlLength}"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/c/{uId}","/c/{uId}/{urlLength}"}, method = {RequestMethod.GET, RequestMethod.POST})
     public String createShrtURL(@PathVariable String uId, 
                                 @PathVariable Optional<Integer> urlLength,
                                 @RequestParam("url") String encodedURL) {
@@ -146,8 +94,11 @@ public class ShrtURLController {
         }
     }
     
-    //TODO add the url activate/deactivate  method.
-    
+    @RequestMapping(value = "/e/{uId}/{urlId}", method = {RequestMethod.GET, RequestMethod.POST})
+    public String setURLStatus(@PathVariable String uId, @PathVariable String urlId, @PathVariable Boolean enable) {
+        
+        return null;
+    }
     /**
      * get the URL from the id. can be used to validate your submission.
      * @param urlId unique short code
